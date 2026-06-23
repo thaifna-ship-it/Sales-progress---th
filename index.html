@@ -110,6 +110,7 @@
   </div>
 
   <script>
+    // ⚠️ วาง URL ของ Google Apps Script Web App ที่ได้จากการ Deploy ของคุณที่นี่
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzzSCEjCn8WMShMYwJ3UMeZw04BShzLRZJBEQmOqUJjYAYzw_-HdpGUBsNnZdFfw6H8Bg/exec"; 
 
     let rawDataGlobal = [];
@@ -215,6 +216,49 @@
       };
       Object.values(cols).forEach(col => col.innerHTML = "");
 
+      // ส่วนการสร้างและการ์ด Kanban ลงบอร์ด (แก้ไขจุดที่ขาดหายไป)
       filteredData.forEach(item => {
         const targetCol = cols[item.status];
         if (!targetCol) return;
+
+        const card = document.createElement("div");
+        card.className = "deal-card";
+        card.innerHTML = `
+          <h4>${item.companyName}</h4>
+          <p><b>ผู้ติดต่อ:</b> ${item.contactName || '-'}</p>
+          <p><b>Email:</b> ${item.email || '-'}</p>
+          <p><b>หมายเหตุ:</b> ${item.notes || '-'}</p>
+          <span class="date-tag">📅 ${item.date || '-'}</span>
+          <select class="status-select" onchange="updateStatus('${item.companyName}', this.value)">
+            ${statuses.map(s => `<option value="${s}" ${item.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        `;
+        targetCol.appendChild(card);
+      });
+
+      // แสดงบอร์ดหลังจากโหลดและวาดการ์ดเสร็จแล้ว
+      document.getElementById("kanbanBoard").style.display = "table";
+    }
+
+    // ฟังก์ชันอัปเดตสถานะกลับไปยัง Google Sheets เมื่อเปลี่ยนค่าใน Dropdown
+    function updateStatus(companyName, newStatus) {
+      if (!confirm(`คุณต้องการเปลี่ยนสถานะของ ${companyName} เป็น ${newStatus} ใช่หรือไม่?`)) return;
+
+      fetch(`${GAS_WEB_APP_URL}?action=updateStatus&companyName=${encodeURIComponent(companyName)}&newStatus=${encodeURIComponent(newStatus)}`)
+        .then(response => response.json())
+        .then(res => {
+          if (res.status === "success") {
+            alert("อัปเดตสถานะสำเร็จ!");
+            fetchData(); // รีเฟรชข้อมูลบอร์ดใหม่หลังอัปเดต
+          } else {
+            alert("เกิดข้อผิดพลาด: " + res.message);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("ไม่สามารถเชื่อมต่อเพื่ออัปเดตข้อมูลได้");
+        });
+    }
+  </script>
+</body>
+</html>
