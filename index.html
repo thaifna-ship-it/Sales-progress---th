@@ -18,11 +18,11 @@
     .filter-group { margin-bottom: 15px; }
     .filter-group select, .filter-group input { padding: 8px 12px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc; margin-right: 10px; }
     
-    .stats-grid { display: block; overflow: hidden; margin-top: 15px; }
-    .stat-card { display: inline-block; width: 18%; background: #e9ecef; padding: 15px; border-radius: 6px; margin-right: 1.5%; text-align: center; box-sizing: border-box; }
-    .stat-card:last-child { margin-right: 0; }
-    .stat-card h3 { margin: 0 0 5px 0; font-size: 14px; color: #666; }
-    .stat-card p { margin: 0; font-size: 24px; font-weight: bold; color: #007bff; }
+    /* ปรับ Stats Grid ให้ยืดหยุ่นรองรับ 9 กล่อง */
+    .stats-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .stat-card { flex: 1; min-width: 120px; background: #e9ecef; padding: 15px; border-radius: 6px; text-align: center; box-sizing: border-box; }
+    .stat-card h3 { margin: 0 0 5px 0; font-size: 13px; color: #666; }
+    .stat-card p { margin: 0; font-size: 20px; font-weight: bold; color: #007bff; }
 
     /* Summary Panel */
     .summary-panel { background: #eaf1f8; padding: 15px 20px; border-radius: 6px; margin-top: 15px; border-left: 5px solid #007bff; }
@@ -31,24 +31,41 @@
     .summary-box p { margin: 5px 0; font-size: 15px; }
     .rate-text { font-size: 20px; font-weight: bold; }
 
-    /* Kanban Board Layout */
-    .kanban-table { display: table; width: 100%; table-layout: fixed; margin-top: 20px; }
-    .kanban-col { display: table-cell; width: 20%; padding: 0 10px; vertical-align: top; box-sizing: border-box; }
-    .col-header { background: #343a40; color: #fff; padding: 12px; border-radius: 6px 6px 0 0; font-size: 14px; font-weight: bold; text-align: center; }
-    .col-body { background: #eef1f5; min-height: 500px; padding: 10px; border-radius: 0 0 6px 6px; border: 1px solid #dcdfe6; }
+    /* Kanban Board Layout (ปรับเป็น Flex แนวนอนเพื่อไม่ให้บีบ) */
+    .kanban-wrapper { width: 100%; overflow-x: auto; padding-bottom: 15px; }
+    .kanban-table { display: flex; gap: 15px; min-width: 1800px; margin-top: 10px; }
+    .kanban-col { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
+    .col-header { color: #fff; padding: 12px; border-radius: 6px 6px 0 0; font-size: 13px; font-weight: bold; text-align: center; }
+    .col-body { background: #eef1f5; min-height: 500px; padding: 10px; border-radius: 0 0 6px 6px; border: 1px solid #dcdfe6; border-top: none; }
     
+    /* สีกำหนดคอลัมน์ Header */
+    .col-1 .col-header { background: #6c757d; }
+    .col-2 .col-header { background: #17a2b8; }
+    .col-3 .col-header { background: #007bff; }
+    .col-4 .col-header { background: #fd7e14; }
+    .col-5 .col-header { background: #6f42c1; }
+    .col-6 .col-header { background: #e83e8c; }
+    .col-7 .col-header { background: #ffc107; color: #333; }
+    .col-8 .col-header { background: #28a745; }
+    .col-9 .col-header { background: #dc3545; }
+
     /* Deal Card */
     .deal-card { background: var(--card-bg); border-radius: 4px; padding: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #6c757d; position: relative; }
-    .deal-card h4 { margin: 0 0 5px 0; font-size: 15px; }
+    .deal-card h4 { margin: 0 0 5px 0; font-size: 14px; }
     .deal-card p { margin: 3px 0; font-size: 12px; color: #555; }
     .deal-card .date-tag { font-size: 11px; color: #999; display: block; margin-top: 5px; }
     .status-select { width: 100%; margin-top: 8px; padding: 4px; font-size: 12px; }
 
-    .col-1 .deal-card { border-left-color: #17a2b8; }
-    .col-2 .deal-card { border-left-color: #007bff; }
-    .col-3 .deal-card { border-left-color: #ffc107; }
+    /* สีกำหนด Card Border ให้ตรงกับ Header */
+    .col-1 .deal-card { border-left-color: #6c757d; }
+    .col-2 .deal-card { border-left-color: #17a2b8; }
+    .col-3 .deal-card { border-left-color: #007bff; }
     .col-4 .deal-card { border-left-color: #fd7e14; }
-    .col-5 .deal-card { border-left-color: #28a745; }
+    .col-5 .deal-card { border-left-color: #6f42c1; }
+    .col-6 .deal-card { border-left-color: #e83e8c; }
+    .col-7 .deal-card { border-left-color: #ffc107; }
+    .col-8 .deal-card { border-left-color: #28a745; }
+    .col-9 .deal-card { border-left-color: #dc3545; }
     
     .loading { text-align: center; font-size: 18px; padding: 5px; color: #666; }
   </style>
@@ -75,46 +92,68 @@
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card"><h3>1. Get Contact</h3><p id="stat-1">0</p></div>
-      <div class="stat-card"><h3>2. Email</h3><p id="stat-2">0</p></div>
-      <div class="stat-card"><h3>3. Online Meeting</h3><p id="stat-3">0</p></div>
-      <div class="stat-card"><h3>4. Making Contract</h3><p id="stat-4">0</p></div>
-      <div class="stat-card"><h3>5. Signed Contract</h3><p id="stat-5">0</p></div>
+      <div class="stat-card"><h3>1. Email</h3><p id="stat-1">0</p></div>
+      <div class="stat-card"><h3>2. Wait to 3</h3><p id="stat-2">0</p></div>
+      <div class="stat-card"><h3>3. Call</h3><p id="stat-3">0</p></div>
+      <div class="stat-card"><h3>4. Appointment</h3><p id="stat-4">0</p></div>
+      <div class="stat-card"><h3>5. Meeting</h3><p id="stat-5">0</p></div>
+      <div class="stat-card"><h3>6. Potential Follow up</h3><p id="stat-6">0</p></div>
+      <div class="stat-card"><h3>7. 2ndMeeting</h3><p id="stat-7">0</p></div>
+      <div class="stat-card"><h3>8. Contract</h3><p id="stat-8">0</p></div>
+      <div class="stat-card"><h3 style="color: #dc3545;">9. NG</h3><p id="stat-9" style="color: #dc3545;">0</p></div>
     </div>
 
     <div id="summaryPanel" class="summary-panel" style="display: none;">
       <h3>📈 สรุปผล Conversion Rate</h3>
       <div class="summary-grid">
         <div class="summary-box">
-          <p>ส่ง Email (XX): <b id="sum-xx">0</b></p>
-          <p>Online Meeting (YY): <b id="sum-yy">0</b></p>
-          <p>Signed Contract (ZZ): <b id="sum-zz">0</b></p>
+          <p>ส่ง Email : <b id="sum-email">0</b></p>
+          <p>Meeting : <b id="sum-meeting">0</b></p>
+          <p>Contract : <b id="sum-contract">0</b></p>
         </div>
         <div class="summary-box" style="border-left: 2px solid #ccc; padding-left: 40px;">
-          <p><b>Online Meeting Rate</b> <br><span id="rate-meeting" class="rate-text" style="color: #007bff;">0%</span></p>
-          <p><b>Signed Contract Rate</b> <br><span id="rate-signed" class="rate-text" style="color: #28a745;">0%</span></p>
+          <p><b>Meeting Rate</b> <br><span id="rate-meeting" class="rate-text" style="color: #007bff;">0%</span></p>
+          <p><b>Contract Rate</b> <br><span id="rate-contract" class="rate-text" style="color: #28a745;">0%</span></p>
         </div>
       </div>
-      <p style="font-size: 12px; color: #666; margin-top: 10px;">* คำนวณจากสูตร: Rate = Target / (XX + YY + ZZ)</p>
+      <p style="font-size: 12px; color: #666; margin-top: 10px;">* คำนวณจากสูตร: Rate = (Stage นั้นๆ) / (Email + Meeting + Contract)</p>
     </div>
   </div>
 
   <div id="loadingText" class="loading">กำลังโหลดข้อมูลจาก Google Sheets...</div>
 
-  <div class="kanban-table" id="kanbanBoard" style="display: none;">
-    <div class="kanban-col col-1"><div class="col-header">1. Get Contact</div><div class="col-body" id="col-get-contact"></div></div>
-    <div class="kanban-col col-2"><div class="col-header">2. Email</div><div class="col-body" id="col-email"></div></div>
-    <div class="kanban-col col-3"><div class="col-header">3. Online Meeting</div><div class="col-body" id="col-meeting"></div></div>
-    <div class="kanban-col col-4"><div class="col-header">4. Making Contract</div><div class="col-body" id="col-contract"></div></div>
-    <div class="kanban-col col-5"><div class="col-header">5. Signed Contract</div><div class="col-body" id="col-signed"></div></div>
+  <div class="kanban-wrapper">
+    <div class="kanban-table" id="kanbanBoard" style="display: none;">
+      <div class="kanban-col col-1"><div class="col-header">1. Email</div><div class="col-body" id="col-1"></div></div>
+      <div class="kanban-col col-2"><div class="col-header">2. Wait to 3</div><div class="col-body" id="col-2"></div></div>
+      <div class="kanban-col col-3"><div class="col-header">3. Call</div><div class="col-body" id="col-3"></div></div>
+      <div class="kanban-col col-4"><div class="col-header">4. Appointment</div><div class="col-body" id="col-4"></div></div>
+      <div class="kanban-col col-5"><div class="col-header">5. Meeting</div><div class="col-body" id="col-5"></div></div>
+      <div class="kanban-col col-6"><div class="col-header">6. Potential F/U</div><div class="col-body" id="col-6"></div></div>
+      <div class="kanban-col col-7"><div class="col-header">7. 2ndMeeting</div><div class="col-body" id="col-7"></div></div>
+      <div class="kanban-col col-8"><div class="col-header">8. Contract</div><div class="col-body" id="col-8"></div></div>
+      <div class="kanban-col col-9"><div class="col-header">9. NG</div><div class="col-body" id="col-9"></div></div>
+    </div>
   </div>
 
   <script>
-    // ⚠️ วาง URL ของ Google Apps Script Web App ที่ได้จากการ Deploy ของคุณที่นี่
+    // ⚠️ วาง URL ของ Google Apps Script Web App ของคุณที่นี่
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzzSCEjCn8WMShMYwJ3UMeZw04BShzLRZJBEQmOqUJjYAYzw_-HdpGUBsNnZdFfw6H8Bg/exec"; 
 
     let rawDataGlobal = [];
-    const statuses = ["1. Get Contact", "2. Email", "3. Online Meeting", "4. Making Contract", "5. Signed Contract"];
+    
+    // อัปเดตสถานะให้ตรงกับทั้ง 9 ข้อเป๊ะๆ
+    const statuses = [
+      "1. Email", 
+      "2. Wait to 3", 
+      "3. Call", 
+      "4. Appointment", 
+      "5. Meeting", 
+      "6. Potential Follow up", 
+      "7. 2ndMeeting", 
+      "8. Contract", 
+      "9. NG"
+    ];
 
     window.onload = function() { fetchData(); };
 
@@ -174,49 +213,66 @@
         return true;
       });
 
-      const counts = { "1. Get Contact": 0, "2. Email": 0, "3. Online Meeting": 0, "4. Making Contract": 0, "5. Signed Contract": 0 };
-      filteredData.forEach(item => { if (counts[item.status] !== undefined) counts[item.status]++; });
+      // ตั้งค่าตัวนับให้ครบ 9 ขั้นตอน
+      const counts = {};
+      statuses.forEach(s => counts[s] = 0);
+
+      filteredData.forEach(item => { 
+        if (counts[item.status] !== undefined) counts[item.status]++; 
+      });
       
-      // Update Basic Stats
-      document.getElementById("stat-1").innerText = counts["1. Get Contact"];
-      document.getElementById("stat-2").innerText = counts["2. Email"];
-      document.getElementById("stat-3").innerText = counts["3. Online Meeting"];
-      document.getElementById("stat-4").innerText = counts["4. Making Contract"];
-      document.getElementById("stat-5").innerText = counts["5. Signed Contract"];
+      // Update Basic Stats ด้านบนบอร์ด
+      document.getElementById("stat-1").innerText = counts["1. Email"];
+      document.getElementById("stat-2").innerText = counts["2. Wait to 3"];
+      document.getElementById("stat-3").innerText = counts["3. Call"];
+      document.getElementById("stat-4").innerText = counts["4. Appointment"];
+      document.getElementById("stat-5").innerText = counts["5. Meeting"];
+      document.getElementById("stat-6").innerText = counts["6. Potential Follow up"];
+      document.getElementById("stat-7").innerText = counts["7. 2ndMeeting"];
+      document.getElementById("stat-8").innerText = counts["8. Contract"];
+      document.getElementById("stat-9").innerText = counts["9. NG"];
 
       // -----------------------------------------
-      // คำนวณ Summary (XX, YY, ZZ) 
+      // คำนวณ Summary (ปรับจากเดิมให้ใช้ค่าใหม่)
       // -----------------------------------------
-      const xx = counts["2. Email"];
-      const yy = counts["3. Online Meeting"];
-      const zz = counts["5. Signed Contract"];
-      const denominator = xx + yy + zz;
+      const sumEmail = counts["1. Email"];
+      const sumMeeting = counts["5. Meeting"];
+      const sumContract = counts["8. Contract"];
+      const denominator = sumEmail + sumMeeting + sumContract;
 
-      document.getElementById("sum-xx").innerText = xx;
-      document.getElementById("sum-yy").innerText = yy;
-      document.getElementById("sum-zz").innerText = zz;
+      document.getElementById("sum-email").innerText = sumEmail;
+      document.getElementById("sum-meeting").innerText = sumMeeting;
+      document.getElementById("sum-contract").innerText = sumContract;
 
       if (denominator > 0) {
-        const meetingRate = (yy / denominator) * 100;
-        const signedRate = (zz / denominator) * 100;
+        const meetingRate = (sumMeeting / denominator) * 100;
+        const contractRate = (sumContract / denominator) * 100;
         document.getElementById("rate-meeting").innerText = meetingRate.toFixed(1) + "%";
-        document.getElementById("rate-signed").innerText = signedRate.toFixed(1) + "%";
+        document.getElementById("rate-contract").innerText = contractRate.toFixed(1) + "%";
       } else {
         document.getElementById("rate-meeting").innerText = "0%";
-        document.getElementById("rate-signed").innerText = "0%";
+        document.getElementById("rate-contract").innerText = "0%";
       }
       // -----------------------------------------
 
+      // ผูก Status เข้ากับ ID ของคอลัมน์
       const cols = {
-        "1. Get Contact": document.getElementById("col-get-contact"),
-        "2. Email": document.getElementById("col-email"),
-        "3. Online Meeting": document.getElementById("col-meeting"),
-        "4. Making Contract": document.getElementById("col-contract"),
-        "5. Signed Contract": document.getElementById("col-signed")
+        "1. Email": document.getElementById("col-1"),
+        "2. Wait to 3": document.getElementById("col-2"),
+        "3. Call": document.getElementById("col-3"),
+        "4. Appointment": document.getElementById("col-4"),
+        "5. Meeting": document.getElementById("col-5"),
+        "6. Potential Follow up": document.getElementById("col-6"),
+        "7. 2ndMeeting": document.getElementById("col-7"),
+        "8. Contract": document.getElementById("col-8"),
+        "9. NG": document.getElementById("col-9")
       };
-      Object.values(cols).forEach(col => col.innerHTML = "");
+      
+      Object.values(cols).forEach(col => {
+        if(col) col.innerHTML = ""; // ล้างข้อมูลเก่า
+      });
 
-      // ส่วนการสร้างและการ์ด Kanban ลงบอร์ด (แก้ไขจุดที่ขาดหายไป)
+      // วาดการ์ด Kanban ลงบอร์ด
       filteredData.forEach(item => {
         const targetCol = cols[item.status];
         if (!targetCol) return;
@@ -236,11 +292,10 @@
         targetCol.appendChild(card);
       });
 
-      // แสดงบอร์ดหลังจากโหลดและวาดการ์ดเสร็จแล้ว
-      document.getElementById("kanbanBoard").style.display = "table";
+      // แสดงบอร์ดหลังจากโหลดเสร็จแล้ว
+      document.getElementById("kanbanBoard").style.display = "flex";
     }
 
-    // ฟังก์ชันอัปเดตสถานะกลับไปยัง Google Sheets เมื่อเปลี่ยนค่าใน Dropdown
     function updateStatus(companyName, newStatus) {
       if (!confirm(`คุณต้องการเปลี่ยนสถานะของ ${companyName} เป็น ${newStatus} ใช่หรือไม่?`)) return;
 
@@ -248,8 +303,8 @@
         .then(response => response.json())
         .then(res => {
           if (res.status === "success") {
-            alert("อัปเดตสถานะสำเร็จ!");
-            fetchData(); // รีเฟรชข้อมูลบอร์ดใหม่หลังอัปเดต
+            // alert("อัปเดตสถานะสำเร็จ!"); // สามารถปิดแจ้งเตือนนี้ได้ถ้ารู้สึกรบกวนเวลาใช้งาน
+            fetchData(); 
           } else {
             alert("เกิดข้อผิดพลาด: " + res.message);
           }
